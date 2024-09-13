@@ -1,0 +1,10 @@
+mkdisk -size=5 -unit=M -path="/home/jose/Escritorio/archivos_pro1/disk1.mia"
+fdisk -size=50 -unit=K -path="/home/jose/Escritorio/archivos_pro1/disk1.mia" -name=Hola
+mount -path="/home/jose/Escritorio/archivos_pro1/disk1.mia" -name=Hola
+mkfs -id=601A
+login -user=root -pass=123 -id=601A
+mkgrp -name=usuarios
+mkusr -user=user1 -pass=usuario -grp=usuarios
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/mbr_report.png -name=mbr
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/bm_inode_report.png -name=inode
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/inode_report.png -name=bm_inode

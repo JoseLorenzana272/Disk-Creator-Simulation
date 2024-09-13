@@ -1,0 +1,17 @@
+digraph DiskStructure {
+  node [shape=none, fontname="Helvetica,Arial,sans-serif"];
+  rankdir=TB;
+
+  disk [label=<
+    <table border='0' cellborder='1' cellspacing='0' cellpadding='10' style='rounded' bgcolor='#F5F5F5'>
+      <tr>
+        <td colspan='2' bgcolor='#333333'><font color='white'>Disk Report</font></td>
+      </tr>
+      <tr>
+        <td width='99' bgcolor='#FF6347' align='center'><b>MBR</b><br/>99.03%</td>
+        <td width='0' bgcolor='#ADD8E6' align='center'><b>Primaria 1</b><br/>Hola<br/>0.97%</td>
+        <td width='99' bgcolor='#FFFFFF' align='center'><b>Free</b><br/>99.03%</td>
+      </tr>
+    </table>
+  >];
+}
