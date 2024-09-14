@@ -18,7 +18,7 @@ type MKUSER struct {
 	Grp  string
 }
 
-func ParserMkuser(tokens []string) (*MKUSER, error) {
+func ParserMkuser(tokens []string) (string, error) {
 	cmd := &MKUSER{}
 
 	args := strings.Join(tokens, " ")
@@ -29,7 +29,7 @@ func ParserMkuser(tokens []string) (*MKUSER, error) {
 	for _, match := range matches {
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -40,34 +40,34 @@ func ParserMkuser(tokens []string) (*MKUSER, error) {
 		switch key {
 		case "-user":
 			if value == "" {
-				return nil, errors.New("el usuario no puede estar vacío")
+				return "", errors.New("the user cannot be empty")
 			}
 			cmd.User = value
 		case "-pass":
 			if value == "" {
-				return nil, errors.New("la contraseña no puede estar vacía")
+				return "", errors.New("the password cannot be empty")
 			}
 			cmd.Pass = value
 		case "-grp":
 			if value == "" {
-				return nil, errors.New("el grupo no puede estar vacío")
+				return "", errors.New("the group cannot be empty")
 			}
 			cmd.Grp = value
 		default:
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("unknown parameter: %s", key)
 		}
 	}
 
 	if cmd.User == "" {
-		return nil, errors.New("faltan parámetros requeridos: -user")
+		return "", errors.New("there are missing required parameters: -user")
 	}
 
 	if cmd.Pass == "" {
-		return nil, errors.New("faltan parámetros requeridos: -pass")
+		return "", errors.New("there are missing required parameters: -pass")
 	}
 
 	if cmd.Grp == "" {
-		return nil, errors.New("faltan parámetros requeridos: -grp")
+		return "", errors.New("there are missing required parameters: -grp")
 	}
 
 	err := commandMkuser(cmd)
@@ -75,13 +75,13 @@ func ParserMkuser(tokens []string) (*MKUSER, error) {
 		fmt.Println("Error:", err)
 	}
 
-	return cmd, nil
+	return "MKUSER: User: " + cmd.User + " created successfully", nil
 
 }
 
 func commandMkuser(mkuser *MKUSER) error {
 	if !IsLogged {
-		return errors.New("necesitas iniciar sesión para ejecutar este comando")
+		return errors.New("you must be logged in to execute this command")
 	}
 
 	mountedPartition, path, err := global.GetMountedPartition(IdPartitionGlobal)

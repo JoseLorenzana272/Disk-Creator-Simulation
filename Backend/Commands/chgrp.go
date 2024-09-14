@@ -14,7 +14,7 @@ type CHGRP struct {
 	Grp     string
 }
 
-func ParserChgrp(tokens []string) (*CHGRP, error) {
+func ParserChgrp(tokens []string) (string, error) {
 	cmd := &CHGRP{}
 
 	args := strings.Join(tokens, " ")
@@ -25,7 +25,7 @@ func ParserChgrp(tokens []string) (*CHGRP, error) {
 	for _, match := range matches {
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -36,38 +36,38 @@ func ParserChgrp(tokens []string) (*CHGRP, error) {
 		switch key {
 		case "-usuario":
 			if value == "" {
-				return nil, errors.New("el usuario no puede estar vacío")
+				return "", errors.New("the user cannot be empty")
 			}
 			cmd.Usuario = value
 		case "-grp":
 			if value == "" {
-				return nil, errors.New("el grupo no puede estar vacío")
+				return "", errors.New("the group cannot be empty")
 			}
 			cmd.Grp = value
 		default:
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("unknown parameter: %s", key)
 		}
 	}
 
 	if cmd.Usuario == "" {
-		return nil, errors.New("el usuario no puede estar vacío")
+		return "", errors.New("the user cannot be empty")
 	}
 
 	if cmd.Grp == "" {
-		return nil, errors.New("el grupo no puede estar vacío")
+		return "", errors.New("the group cannot be empty")
 	}
 
 	err := commandChgrp(cmd)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return cmd, nil
+	return "CHGRP: Group changed successfully", nil
 }
 
 func commandChgrp(chgrp *CHGRP) error {
 	if !IsLogged {
-		return errors.New("necesitas iniciar sesión para ejecutar este comando")
+		return errors.New("you must be logged to execute this command")
 	}
 
 	mountedPartition, path, err := global.GetMountedPartition(IdPartitionGlobal)

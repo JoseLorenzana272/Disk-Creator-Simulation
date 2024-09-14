@@ -9,9 +9,9 @@ digraph InodeReport {
 				<tr><td><b>UID</b></td><td>1</td></tr>
 				<tr><td><b>GID</b></td><td>1</td></tr>
 				<tr><td><b>Size</b></td><td>0</td></tr>
-				<tr><td><b>Access Time</b></td><td>2024-09-03T19:38:08-06:00</td></tr>
-				<tr><td><b>Creation Time</b></td><td>2024-09-03T19:38:08-06:00</td></tr>
-				<tr><td><b>Modification Time</b></td><td>2024-09-03T19:38:08-06:00</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-13T14:03:12-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-13T14:03:12-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-13T14:03:12-06:00</td></tr>
 				<tr><td><b>Type</b></td><td>0</td></tr>
 				<tr><td><b>Permissions</b></td><td>777</td></tr>
 				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>
@@ -27,10 +27,10 @@ inode1 [label=<
 				<tr><td colspan="2" bgcolor="#CCCCCC"><b>INODE REPORT 1</b></td></tr>
 				<tr><td><b>UID</b></td><td>1</td></tr>
 				<tr><td><b>GID</b></td><td>1</td></tr>
-				<tr><td><b>Size</b></td><td>27</td></tr>
-				<tr><td><b>Access Time</b></td><td>2024-09-03T19:38:08-06:00</td></tr>
-				<tr><td><b>Creation Time</b></td><td>2024-09-03T19:38:08-06:00</td></tr>
-				<tr><td><b>Modification Time</b></td><td>2024-09-03T19:38:08-06:00</td></tr>
+				<tr><td><b>Size</b></td><td>67</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-13T14:03:12-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-13T14:03:12-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-13T14:03:12-06:00</td></tr>
 				<tr><td><b>Type</b></td><td>1</td></tr>
 				<tr><td><b>Permissions</b></td><td>777</td></tr>
 				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>

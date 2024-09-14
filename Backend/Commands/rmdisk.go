@@ -1,8 +1,10 @@
 package Commands
 
 import (
+	"bufio"
 	"errors" // Paquete para manejar errores y crear nuevos errores con mensajes personalizados
 	"fmt"    // Paquete para formatear cadenas y realizar operaciones de entrada/salida
+	"os"
 	"regexp" // Paquete para trabajar con expresiones regulares, útil para encontrar y manipular patrones en cadenas
 
 	// Paquete para convertir cadenas a otros tipos de datos, como enteros
@@ -20,7 +22,7 @@ type RMDISK struct {
 */
 
 // CommandRmdisk parsea el comando rmdisk y devuelve una instancia de RMDISK
-func ParserRmdisk(tokens []string) (*RMDISK, error) {
+func ParserRmdisk(tokens []string) (string, error) {
 	cmd := &RMDISK{} // Crea una nueva instancia de RMDISK
 
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
@@ -35,7 +37,7 @@ func ParserRmdisk(tokens []string) (*RMDISK, error) {
 		// Divide cada parte en clave y valor usando "=" como delimitador
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("formato de parámetro inválido: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -49,22 +51,50 @@ func ParserRmdisk(tokens []string) (*RMDISK, error) {
 		case "-path":
 			// Verifica que el path no esté vacío
 			if value == "" {
-				return nil, errors.New("el path no puede estar vacío")
+				return "", errors.New("el path no puede estar vacío")
 			}
 			cmd.path = value
 		default:
 			// Si el parámetro no es reconocido, devuelve un error
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("parámetro desconocido: %s", key)
 		}
 	}
 
 	// Verifica que el parámetro -path haya sido proporcionado
 	if cmd.path == "" {
-		return nil, errors.New("faltan parámetros requeridos: -path")
+		return "", errors.New("faltan parámetros requeridos: -path")
 	}
 
-	/*
-		Aquí debería ir la lógica para crear el comando RMDISK
-	*/
-	return cmd, nil // Devuelve el comando RMDISK creado
+	// Ejecuta el comando rmdisk
+	err := commandRmdisk(cmd)
+	if err != nil {
+		return "", err
+	}
+
+	return "RMDISK: Disk removed successfully", nil
+}
+
+func commandRmdisk(rmdisk *RMDISK) error {
+	// Verifica si el archivo existe
+	if _, err := os.Stat(rmdisk.path); os.IsNotExist(err) {
+		return errors.New("the file does not exist")
+	}
+
+	// Solicita confirmación al usuario
+	fmt.Printf("Are you sure you want to delete the file '%s'? (yes/no): ", rmdisk.path)
+	scanner := bufio.NewScanner(os.Stdin)
+	scanner.Scan()
+	confirmation := strings.TrimSpace(scanner.Text())
+
+	if strings.ToLower(confirmation) != "yes" {
+		return errors.New("deletion canceled by user")
+	}
+
+	// Elimina el archivo del disco
+	err := os.Remove(rmdisk.path)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

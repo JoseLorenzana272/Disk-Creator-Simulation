@@ -13,7 +13,7 @@ type RMUSR struct {
 	User string
 }
 
-func ParserRmusr(tokens []string) (*RMUSR, error) {
+func ParserRmusr(tokens []string) (string, error) {
 	cmd := &RMUSR{}
 
 	args := strings.Join(tokens, " ")
@@ -24,7 +24,7 @@ func ParserRmusr(tokens []string) (*RMUSR, error) {
 	for _, match := range matches {
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -35,24 +35,24 @@ func ParserRmusr(tokens []string) (*RMUSR, error) {
 		switch key {
 		case "-user":
 			if value == "" {
-				return nil, errors.New("el usuario no puede estar vacío")
+				return "", errors.New("the name of the user cannot be empty")
 			}
 			cmd.User = value
 		default:
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("unknown parameter found: %s", key)
 		}
 	}
 
 	if cmd.User == "" {
-		return nil, errors.New("el usuario no puede estar vacío")
+		return "", errors.New("the name of the user cannot be empty")
 	}
 
 	err := commandRmusr(cmd)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return cmd, nil
+	return "RMUSR: User: " + cmd.User + " deleted successfully", nil
 }
 
 func commandRmusr(cmd *RMUSR) error {

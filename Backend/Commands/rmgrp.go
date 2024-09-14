@@ -13,7 +13,7 @@ type RMGRP struct {
 	Name string
 }
 
-func ParserRmgrp(tokens []string) (*RMGRP, error) {
+func ParserRmgrp(tokens []string) (string, error) {
 	cmd := &RMGRP{}
 
 	// Unir los tokens en un solo string
@@ -28,7 +28,7 @@ func ParserRmgrp(tokens []string) (*RMGRP, error) {
 		// Separar la clave del valor
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -41,26 +41,26 @@ func ParserRmgrp(tokens []string) (*RMGRP, error) {
 		switch key {
 		case "-name":
 			if value == "" {
-				return nil, errors.New("el nombre del grupo no puede estar vacío")
+				return "", errors.New("the name of the group cannot be empty")
 			}
 			cmd.Name = value
 		default:
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("unknown parameter found: %s", key)
 		}
 	}
 
 	// Verificar que el nombre del grupo no esté vacío
 	if cmd.Name == "" {
-		return nil, errors.New("el nombre del grupo no puede estar vacío")
+		return "", errors.New("the name of the group cannot be empty")
 	}
 
 	// Ejecutar el comando RMGRP
 	err := commandRmgrp(cmd)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return cmd, nil
+	return "RMGRP: Group: " + cmd.Name + " deleted succesfully", nil
 }
 
 func commandRmgrp(cmd *RMGRP) error {

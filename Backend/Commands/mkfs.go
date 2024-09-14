@@ -23,7 +23,7 @@ type MKFS struct {
    mkfs -id=vd2
 */
 
-func ParserMkfs(tokens []string) (*MKFS, error) {
+func ParserMkfs(tokens []string) (string, error) {
 	cmd := &MKFS{} // Crea una nueva instancia de MKFS
 
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
@@ -38,7 +38,7 @@ func ParserMkfs(tokens []string) (*MKFS, error) {
 		// Divide cada parte en clave y valor usando "=" como delimitador
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -52,24 +52,24 @@ func ParserMkfs(tokens []string) (*MKFS, error) {
 		case "-id":
 			// Verifica que el id no esté vacío
 			if value == "" {
-				return nil, errors.New("el id no puede estar vacío")
+				return "", errors.New("the id cannot be empty")
 			}
 			cmd.id = value
 		case "-type":
 			// Verifica que el tipo sea "full"
 			if value != "full" {
-				return nil, errors.New("el tipo debe ser full")
+				return "", errors.New("type must be full")
 			}
 			cmd.typ = value
 		default:
 			// Si el parámetro no es reconocido, devuelve un error
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("unknown parameter: %s", key)
 		}
 	}
 
 	// Verifica que el parámetro -id haya sido proporcionado
 	if cmd.id == "" {
-		return nil, errors.New("faltan parámetros requeridos: -id")
+		return "", errors.New("there is a missing required parameter: -id")
 	}
 
 	// Si no se proporcionó el tipo, se establece por defecto a "full"
@@ -83,7 +83,7 @@ func ParserMkfs(tokens []string) (*MKFS, error) {
 		fmt.Println("Error:", err)
 	}
 
-	return cmd, nil // Devuelve el comando MKFS creado
+	return "MKFS: Formatting done successfully", nil
 }
 
 func commandMkfs(mkfs *MKFS) error {

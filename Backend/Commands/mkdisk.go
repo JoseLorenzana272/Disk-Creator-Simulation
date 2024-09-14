@@ -21,14 +21,7 @@ type MKDISK struct {
 	path string
 }
 
-/*
-	mkdisk -size=5 -unit=M -fit=WF -path="/home/keviin/University/PRACTICAS/MIA_LAB_S2_2024/CLASEEXTRA/disks/Disco1.mia"
-   mkdisk -size=3000 -unit=K -path=/home/user/Disco1.mia
-   mkdisk -size=3000 -path=/home/user/Disco1.mia
-   mkdisk -size=10 -path="/home/mis discos/Disco4.mia"
-*/
-
-func ParserMkdisk(tokens []string) (*MKDISK, error) {
+func ParserMkdisk(tokens []string) (string, error) {
 	cmd := &MKDISK{} // Crea una nueva instancia de MKDISK
 
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
@@ -43,7 +36,7 @@ func ParserMkdisk(tokens []string) (*MKDISK, error) {
 		// Divide cada parte en clave y valor usando "=" como delimitador
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -58,40 +51,40 @@ func ParserMkdisk(tokens []string) (*MKDISK, error) {
 			// Convierte el valor del tamaño a un entero
 			size, err := strconv.Atoi(value)
 			if err != nil || size <= 0 {
-				return nil, errors.New("el tamaño debe ser un número entero positivo")
+				return "", errors.New("the size must be a positive integer")
 			}
 			cmd.size = size
 		case "-unit":
 			// Verifica que la unidad sea "K" o "M"
 			if value != "K" && value != "M" {
-				return nil, errors.New("la unidad debe ser K o M")
+				return "", errors.New("the unit must be K or M")
 			}
 			cmd.unit = strings.ToUpper(value)
 		case "-fit":
 			// Verifica que el ajuste sea "BF", "FF" o "WF"
 			value = strings.ToUpper(value)
 			if value != "BF" && value != "FF" && value != "WF" {
-				return nil, errors.New("el ajuste debe ser BF, FF o WF")
+				return "", errors.New("the fit must be BF, FF or WF")
 			}
 			cmd.fit = value
 		case "-path":
 			// Verifica que el path no esté vacío
 			if value == "" {
-				return nil, errors.New("el path no puede estar vacío")
+				return "", errors.New("el path no puede estar vacío")
 			}
 			cmd.path = value
 		default:
 			// Si el parámetro no es reconocido, devuelve un error
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("parámetro desconocido: %s", key)
 		}
 	}
 
 	// Verifica que los parámetros -size y -path hayan sido proporcionados
 	if cmd.size == 0 {
-		return nil, errors.New("faltan parámetros requeridos: -size")
+		return "", errors.New("not enough parameters: -size")
 	}
 	if cmd.path == "" {
-		return nil, errors.New("faltan parámetros requeridos: -path")
+		return "", errors.New("not enough parameters: -path")
 	}
 
 	// Si no se proporcionó la unidad, se establece por defecto a "M"
@@ -110,7 +103,7 @@ func ParserMkdisk(tokens []string) (*MKDISK, error) {
 		fmt.Println("Error:", err)
 	}
 
-	return cmd, nil // Devuelve el comando MKDISK creado
+	return "MKDISK: Disk created succesfully.", nil // Devuelve el comando MKDISK creado
 }
 
 func commandMkdisk(mkdisk *MKDISK) error {

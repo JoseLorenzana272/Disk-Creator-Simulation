@@ -43,11 +43,14 @@ function Interpreter() {
                 },
                 body: JSON.stringify({ code }),
             });
-
+    
             if (!response.ok) {
-                throw new Error('Error al ejecutar el código');
+                // Leer el cuerpo como texto para incluir en el mensaje de error
+                const errorText = await response.text();
+                throw new Error(`Error al ejecutar el código: ${response.status} ${response.statusText}\n${errorText}`);
             }
-
+    
+            // Leer el cuerpo como JSON
             const result = await response.json();
             const formattedOutput = result.output.map(obj => obj.message || JSON.stringify(obj)).join('\n');
             setOutput(formattedOutput);
@@ -55,6 +58,7 @@ function Interpreter() {
             setOutput(`Error: ${error.message}`);
         }
     };
+    
 
     const handleGitHub = () => {
         window.open('https://github.com/JoseLorenzana272', '_blank');

@@ -16,7 +16,7 @@ type MKGRP struct {
 	Name string
 }
 
-func ParserMkgrp(tokens []string) (*MKGRP, error) {
+func ParserMkgrp(tokens []string) (string, error) {
 	cmd := &MKGRP{}
 
 	// Unir los tokens en un solo string
@@ -31,7 +31,7 @@ func ParserMkgrp(tokens []string) (*MKGRP, error) {
 		// Separar la clave del valor
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -44,17 +44,17 @@ func ParserMkgrp(tokens []string) (*MKGRP, error) {
 		switch key {
 		case "-name":
 			if value == "" {
-				return nil, errors.New("el nombre del grupo no puede estar vacío")
+				return "", errors.New("the group name cannot be empty")
 			}
 			cmd.Name = value
 		default:
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("unknown parameter: %s", key)
 		}
 	}
 
 	// Verificar que el nombre del grupo no esté vacío
 	if cmd.Name == "" {
-		return nil, errors.New("el nombre del grupo no puede estar vacío")
+		return "", errors.New("the group name cannot be empty")
 	}
 
 	// Ejecutar el comando MKGRP
@@ -63,7 +63,7 @@ func ParserMkgrp(tokens []string) (*MKGRP, error) {
 		fmt.Println("Error:", err)
 	}
 
-	return cmd, nil
+	return "MKGRP: Group: " + cmd.Name + " created successfully", nil
 }
 
 func commandMkgrp(mkgrp *MKGRP) error {

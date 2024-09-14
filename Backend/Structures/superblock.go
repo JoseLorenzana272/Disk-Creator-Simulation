@@ -1038,3 +1038,93 @@ func (sb *SuperBlock) UpdateGroupForUser(path string, target string, group strin
 
 	return "", nil
 }*/
+
+func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir string) error {
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		return sb.createFolderInInode(path, 0, parentsDir, destDir)
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	for i := int32(0); i < sb.S_inodes_count; i++ {
+		err := sb.createFolderInInode(path, i, parentsDir, destDir)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// CreateFile crea un archivo en el sistema de archivos
+func (sb *SuperBlock) CreateFile(path string, parentsDir []string, destFile string, size int, cont []string) error {
+
+	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
+	if len(parentsDir) == 0 {
+		return sb.createFileInInode(path, 0, parentsDir, destFile, size, cont)
+	}
+
+	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
+	for i := int32(0); i < sb.S_inodes_count; i++ {
+		err := sb.createFileInInode(path, i, parentsDir, destFile, size, cont)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (sb *SuperBlock) DirectoryExists(partitionPath string, dirPath string) bool {
+	// Dividir la ruta en partes para verificar cada directorio
+	dirs := strings.Split(dirPath, "/")
+	fmt.Println("Buscando ruta:", dirs)
+
+	// Leer el bloque de carpeta raíz
+	currentBlock := &FolderBlock{}
+	err := currentBlock.Deserialize(partitionPath, int64(sb.S_block_start))
+	if err != nil {
+		fmt.Println("Error al deserializar el bloque raíz:", err)
+		return false
+	}
+
+	// Recorrer cada parte de la ruta
+	for _, dir := range dirs {
+		if dir == "" {
+			continue // Si hay una cadena vacía (por ejemplo, al inicio), saltarla
+		}
+
+		fmt.Println("Buscando directorio:", dir)
+		found := false
+		for _, content := range currentBlock.B_content {
+			// Convertir el nombre del contenido a string
+			contentName := strings.TrimRight(string(content.B_name[:]), "\x00")
+
+			fmt.Println("Comparando con:", contentName)
+			// Si se encuentra el directorio, cargar su bloque y continuar con la búsqueda
+			if contentName == dir {
+				fmt.Println("Directorio encontrado:", dir)
+				// Encontramos el directorio, cargar el siguiente bloque de carpeta
+				nextBlock := &FolderBlock{}
+				err := nextBlock.Deserialize(partitionPath, int64(content.B_inodo))
+				if err != nil {
+					fmt.Println("Error al deserializar el siguiente bloque:", err)
+					return false
+				}
+				currentBlock = nextBlock
+				found = true
+				break
+			}
+		}
+
+		// Si el directorio no fue encontrado en este nivel, retornar falso
+		if !found {
+			fmt.Println("Directorio no encontrado:", dir)
+			return false
+		}
+	}
+
+	// Si se recorrieron todos los directorios y se encontraron, retornar true
+	fmt.Println("Ruta encontrada:", dirPath)
+	return true
+}

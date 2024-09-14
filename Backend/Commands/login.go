@@ -18,7 +18,7 @@ type LOGIN struct {
 	Id   string
 }
 
-func ParserLogin(tokens []string) (*LOGIN, error) {
+func ParserLogin(tokens []string) (string, error) {
 	cmd := &LOGIN{}
 
 	args := strings.Join(tokens, " ")
@@ -29,7 +29,7 @@ func ParserLogin(tokens []string) (*LOGIN, error) {
 	for _, match := range matches {
 		kv := strings.SplitN(match, "=", 2)
 		if len(kv) != 2 {
-			return nil, fmt.Errorf("formato de parámetro inválido: %s", match)
+			return "", fmt.Errorf("format of parameter is invalid: %s", match)
 		}
 		key, value := strings.ToLower(kv[0]), kv[1]
 
@@ -40,34 +40,34 @@ func ParserLogin(tokens []string) (*LOGIN, error) {
 		switch key {
 		case "-user":
 			if value == "" {
-				return nil, errors.New("el usuario no puede estar vacío")
+				return "", errors.New("the user cannot be empty")
 			}
 			cmd.User = value
 		case "-pass":
 			if value == "" {
-				return nil, errors.New("la contraseña no puede estar vacía")
+				return "", errors.New("the password cannot be empty")
 			}
 			cmd.Pass = value
 		case "-id":
 			if value == "" {
-				return nil, errors.New("el id no puede estar vacío")
+				return "", errors.New("the id cannot be empty")
 			}
 			cmd.Id = value
 		default:
-			return nil, fmt.Errorf("parámetro desconocido: %s", key)
+			return "", fmt.Errorf("unknown parameter: %s", key)
 		}
 	}
 
 	if cmd.User == "" {
-		return nil, errors.New("faltan parámetros requeridos: -user")
+		return "", errors.New("there is a missing required parameter: -user")
 	}
 
 	if cmd.Pass == "" {
-		return nil, errors.New("faltan parámetros requeridos: -pass")
+		return "", errors.New("there is a missing required parameter: -pass")
 	}
 
 	if cmd.Id == "" {
-		return nil, errors.New("faltan parámetros requeridos: -id")
+		return "", errors.New("there is a missing required parameter: -id")
 	}
 
 	err := commandLogin(cmd)
@@ -75,12 +75,12 @@ func ParserLogin(tokens []string) (*LOGIN, error) {
 		fmt.Println("Error:", err)
 	}
 
-	return cmd, nil
+	return "LOGIN: You are logged in with user " + cmd.User, nil
 }
 
 func commandLogin(login *LOGIN) error {
 	if IsLogged {
-		return errors.New("ya hay una sesión iniciada")
+		return errors.New("there's already a user logged in")
 	}
 	//Traer el path del disco
 	idPartition, path, err := global.GetMountedPartition(login.Id)
