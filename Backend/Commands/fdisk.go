@@ -488,11 +488,11 @@ func calculateTotalDiskSize(mbr structures.MBR) int64 {
 func getPartitionColor(partitionType string) string {
 	switch partitionType {
 	case "P":
-		return "#ADD8E6" // Azul claro
+		return "#ADD8E6"
 	case "E":
-		return "#90EE90" // Verde claro
+		return "#90EE90"
 	default:
-		return "#D3D3D3" // Gris claro
+		return "#D3D3D3"
 	}
 }
 

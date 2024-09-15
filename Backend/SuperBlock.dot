@@ -1,0 +1,29 @@
+digraph SuperBlock {
+  node [shape=none, fontname="Helvetica,Arial,sans-serif"];
+  rankdir=TB;
+
+  sb [label=<
+    <table border='0' cellborder='1' cellspacing='0' cellpadding='10' style='rounded' bgcolor='#F5F5F5'>
+      <tr>
+        <td colspan='2' bgcolor='#333333'><font color='white'>SuperBlock Report</font></td>
+      </tr>
+      <tr><td>Filesystem Type:</td><td>2</td></tr>
+      <tr><td>Inodes Count:</td><td>2</td></tr>
+      <tr><td>Blocks Count:</td><td>2</td></tr>
+      <tr><td>Free Inodes Count:</td><td>178</td></tr>
+      <tr><td>Free Blocks Count:</td><td>538</td></tr>
+      <tr><td>Mount Time:</td><td>2024-09-15T00:45:20-06:00</td></tr>
+      <tr><td>Unmount Time:</td><td>2024-09-15T00:45:20-06:00</td></tr>
+      <tr><td>Mount Count:</td><td>1</td></tr>
+      <tr><td>Magic:</td><td>61267</td></tr>
+      <tr><td>Inode Size:</td><td>88</td></tr>
+      <tr><td>Block Size:</td><td>64</td></tr>
+      <tr><td>First Inode:</td><td>1117</td></tr>
+      <tr><td>First Block:</td><td>16909</td></tr>
+      <tr><td>Bitmap Inode Start:</td><td>221</td></tr>
+      <tr><td>Bitmap Block Start:</td><td>401</td></tr>
+      <tr><td>Inode Start:</td><td>941</td></tr>
+      <tr><td>Block Start:</td><td>16781</td></tr>
+    </table>
+  >];
+}

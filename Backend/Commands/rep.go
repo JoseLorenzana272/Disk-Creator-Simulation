@@ -5,6 +5,7 @@ import (
 	"archivos_pro1/reports"
 	"errors"
 	"fmt"
+	"os/exec"
 	"regexp"
 	"strings"
 )
@@ -121,8 +122,37 @@ func commandRep(rep *REP) error {
 		}
 
 	case "disk":
-		//Mensaje de que se ha creado el reporte
-		fmt.Println("Reporte de disco creado")
+
+		dotPath := strings.TrimSuffix(mountedDiskPath, ".mia") + "_fdisk_report.dot"
+		imgPath := strings.TrimSuffix(mountedDiskPath, ".mia") + "_fdisk_report.png"
+
+		// Comando para convertir el archivo DOT en una imagen usando Graphviz
+		cmd := exec.Command("dot", "-Tpng", dotPath, "-o", imgPath)
+		err = cmd.Run()
+		if err != nil {
+			return fmt.Errorf("error generating disk image: %v", err)
+		}
+
+		// Mensaje de éxito
+		fmt.Printf("Imagen del reporte de disco creada en: %s\n", imgPath)
+
+	case "sb":
+		err = reports.ReportSuperblock(mountedSb, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+		}
+
+	case "block":
+		err = reports.ReportBlock(mountedSb, mountedDiskPath, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+		}
+
+	case "bm_block":
+		err = reports.ReportBMBlock(mountedSb, mountedDiskPath, rep.path)
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+		}
 	}
 
 	return nil

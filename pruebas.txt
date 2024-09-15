@@ -8,3 +8,8 @@ mkusr -user=user1 -pass=usuario -grp=usuarios
 rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/mbr_report.png -name=mbr
 rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/bm_inode_report.png -name=inode
 rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/inode_report.png -name=bm_inode
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/sb_report.png -name=sb
+mkdir -p -path=/home/jose/Escritorio/prueba_A
+mkdir -p -path=/home/jose/Escritorio/prueba_B
+mkfile -size=15 -path=/home/jose/Escritorio/a.txt -r
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/block_report.png -name=block

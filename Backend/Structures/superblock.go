@@ -294,38 +294,69 @@ func (sb *SuperBlock) Print() {
 	fmt.Printf("Inode Start: %d\n", sb.S_inode_start)
 	fmt.Printf("Block Start: %d\n", sb.S_block_start)
 
-	//.dot
-	dot := fmt.Sprintf(`
-digraph SuperBlock {
-	rankdir=LR;
-	node [shape=record];
+	//Generar el archivo .dot
+	sb.GenerateSBDotFile()
+}
 
-	sb [label=<
-	<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
-		<TR><TD><B>SuperBlock</B></TD></TR>
-		<TR><TD ALIGN="LEFT">Filesystem Type: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Inodes Count: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Blocks Count: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Free Inodes Count: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Free Blocks Count: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Mount Time: %s</TD></TR>
-		<TR><TD ALIGN="LEFT">Unmount Time: %s</TD></TR>
-		<TR><TD ALIGN="LEFT">Mount Count: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Magic: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Inode Size: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Block Size: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">First Inode: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">First Block: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Bitmap Inode Start: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Bitmap Block Start: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Inode Start: %d</TD></TR>
-		<TR><TD ALIGN="LEFT">Block Start: %d</TD></TR>
-	</TABLE>
-	>];
-}`, sb.S_filesystem_type, sb.S_inodes_count, sb.S_blocks_count, sb.S_free_inodes_count, sb.S_free_blocks_count,
-		mountTime.Format(time.RFC3339), unmountTime.Format(time.RFC3339), sb.S_mnt_count, sb.S_magic, sb.S_inode_size,
-		sb.S_block_size, sb.S_first_ino, sb.S_first_blo, sb.S_bm_inode_start, sb.S_bm_block_start, sb.S_inode_start, sb.S_block_start)
-	fmt.Println(dot)
+func (sb *SuperBlock) GenerateSBDotFile() {
+	// Convertir el tiempo de montaje a una fecha
+	mountTime := time.Unix(int64(sb.S_mtime), 0)
+	// Convertir el tiempo de desmontaje a una fecha
+	unmountTime := time.Unix(int64(sb.S_umtime), 0)
+
+	// Usamos strings.Builder para construir el archivo .dot
+	var dotContent strings.Builder
+	dotContent.WriteString("digraph SuperBlock {\n")
+	dotContent.WriteString("  node [shape=none, fontname=\"Helvetica,Arial,sans-serif\"];\n")
+	dotContent.WriteString("  rankdir=TB;\n\n")
+
+	// Crear el nodo del SuperBlock
+	dotContent.WriteString("  sb [label=<\n")
+	dotContent.WriteString("    <table border='0' cellborder='1' cellspacing='0' cellpadding='10' style='rounded' bgcolor='#F5F5F5'>\n")
+	dotContent.WriteString("      <tr>\n")
+	dotContent.WriteString("        <td colspan='2' bgcolor='#333333'><font color='white'>SuperBlock Report</font></td>\n")
+	dotContent.WriteString("      </tr>\n")
+
+	// Agregar los atributos del SuperBlock
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Filesystem Type:</td><td>%d</td></tr>\n", sb.S_filesystem_type))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Inodes Count:</td><td>%d</td></tr>\n", sb.S_inodes_count))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Blocks Count:</td><td>%d</td></tr>\n", sb.S_blocks_count))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Free Inodes Count:</td><td>%d</td></tr>\n", sb.S_free_inodes_count))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Free Blocks Count:</td><td>%d</td></tr>\n", sb.S_free_blocks_count))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Mount Time:</td><td>%s</td></tr>\n", mountTime.Format(time.RFC3339)))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Unmount Time:</td><td>%s</td></tr>\n", unmountTime.Format(time.RFC3339)))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Mount Count:</td><td>%d</td></tr>\n", sb.S_mnt_count))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Magic:</td><td>%d</td></tr>\n", sb.S_magic))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Inode Size:</td><td>%d</td></tr>\n", sb.S_inode_size))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Block Size:</td><td>%d</td></tr>\n", sb.S_block_size))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>First Inode:</td><td>%d</td></tr>\n", sb.S_first_ino))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>First Block:</td><td>%d</td></tr>\n", sb.S_first_blo))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Bitmap Inode Start:</td><td>%d</td></tr>\n", sb.S_bm_inode_start))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Bitmap Block Start:</td><td>%d</td></tr>\n", sb.S_bm_block_start))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Inode Start:</td><td>%d</td></tr>\n", sb.S_inode_start))
+	dotContent.WriteString(fmt.Sprintf("      <tr><td>Block Start:</td><td>%d</td></tr>\n", sb.S_block_start))
+
+	// Cerrar tabla y nodo
+	dotContent.WriteString("    </table>\n")
+	dotContent.WriteString("  >];\n")
+	dotContent.WriteString("}\n")
+
+	// Crear el archivo .dot
+	file, err := os.Create("SuperBlock.dot")
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer file.Close()
+
+	// Escribir el contenido en el archivo
+	_, err = file.WriteString(dotContent.String())
+	if err != nil {
+		fmt.Println("Error escribiendo en el archivo .dot:", err)
+		return
+	}
+
+	fmt.Println("SuperBlock.dot file created")
 }
 
 // Imprimir inodos

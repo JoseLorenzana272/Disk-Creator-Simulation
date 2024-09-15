@@ -1,0 +1,25 @@
+digraph G {
+		node [shape=plaintext, fontname="Helvetica, Arial, sans-serif"]
+		tabla [label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="10" bgcolor="#f7f7f7" style="rounded">
+				<tr><td colspan="2" bgcolor="#4CAF50" align="center" cellpadding="4" cellspacing="0"><b><font color="white">SUPERBLOCK REPORT</font></b></td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Filesystem Type</b></td><td>2</td></tr>
+				<tr><td><b>Inodes Count</b></td><td>2</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Blocks Count</b></td><td>3</td></tr>
+				<tr><td><b>Free Inodes Count</b></td><td>178</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Free Blocks Count</b></td><td>537</td></tr>
+				<tr><td><b>Mount Time</b></td><td>2024-09-15 00:45:20</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Unmount Time</b></td><td>2024-09-15 00:45:20</td></tr>
+				<tr><td><b>Mount Count</b></td><td>1</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Magic</b></td><td>61267</td></tr>
+				<tr><td><b>Inode Size</b></td><td>88</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Block Size</b></td><td>64</td></tr>
+				<tr><td><b>First Inode</b></td><td>1117</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>First Block</b></td><td>16973</td></tr>
+				<tr><td><b>Bitmap Inode Start</b></td><td>221</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Bitmap Block Start</b></td><td>401</td></tr>
+				<tr><td><b>Inode Start</b></td><td>941</td></tr>
+				<tr bgcolor="#eeeeee"><td><b>Block Start</b></td><td>16781</td></tr>
+			</table>
+		> ]}
+	
