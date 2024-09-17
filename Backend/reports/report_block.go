@@ -3,6 +3,7 @@ package reports
 import (
 	structures "archivos_pro1/Structures"
 	"archivos_pro1/utils"
+	"bytes"
 	"fmt"
 	"os"
 	"os/exec"
@@ -29,25 +30,25 @@ func ReportBlock(superblock *structures.SuperBlock, diskPath string, path string
 
 	// Iterar sobre los bloques
 	for i := int32(0); i < superblock.S_blocks_count; i++ {
-		blockType := determineBlockType(i) // Función para determinar el tipo de bloque (Pointer, Folder, File)
+		blockType := structures.BlocksMap[int(i)]
 		blockStart := int64(superblock.S_block_start + (i * superblock.S_block_size))
 
 		switch blockType {
-		case "PointerBlock":
+		case "Pointer Block":
 			pointerBlock := &structures.PointerBlock{}
 			if err := pointerBlock.Deserialize(diskPath, blockStart); err != nil {
 				return fmt.Errorf("error deserializando PointerBlock %d: %v", i, err)
 			}
 			dotContent += formatPointerBlock(i, pointerBlock)
 
-		case "FolderBlock":
+		case "Folder Block":
 			folderBlock := &structures.FolderBlock{}
 			if err := folderBlock.Deserialize(diskPath, blockStart); err != nil {
 				return fmt.Errorf("error deserializando FolderBlock %d: %v", i, err)
 			}
 			dotContent += formatFolderBlock(i, folderBlock)
 
-		case "FileBlock":
+		case "File Block":
 			fileBlock := &structures.FileBlock{}
 			if err := fileBlock.Deserialize(diskPath, blockStart); err != nil {
 				return fmt.Errorf("error deserializando FileBlock %d: %v", i, err)
@@ -78,17 +79,6 @@ func ReportBlock(superblock *structures.SuperBlock, diskPath string, path string
 	return nil
 }
 
-// determineBlockType retorna el tipo de bloque (Pointer, Folder, File) basándose en su índice o metadata
-func determineBlockType(index int32) string {
-	if index%3 == 0 {
-		return "PointerBlock"
-	} else if index%3 == 1 {
-		return "FolderBlock"
-	} else {
-		return "FileBlock"
-	}
-}
-
 // formatPointerBlock genera el contenido DOT para un PointerBlock
 func formatPointerBlock(index int32, block *structures.PointerBlock) string {
 	content := fmt.Sprintf(`pointerBlock%d [label=<
@@ -111,10 +101,14 @@ func formatFolderBlock(index int32, block *structures.FolderBlock) string {
 			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FOLDER BLOCK %d</b></td></tr>
 	`, index, index)
 
-	for i, contentItem := range block.B_content {
-		name := string(contentItem.B_name[:])
-		content += fmt.Sprintf(`<tr><td>Name %d</td><td>%s</td></tr>`, i+1, name)
-		content += fmt.Sprintf(`<tr><td>Inode</td><td>%d</td></tr>`, contentItem.B_inodo)
+	for _, contentItem := range block.B_content {
+		name := string(bytes.Trim(contentItem.B_name[:], "\x00"))
+		inodo := contentItem.B_inodo
+		if inodo == 0 { // Verifica si el inodo es nulo o 0
+			content += fmt.Sprintf(`<tr><td>Name %s</td><td>-</td></tr>`, name)
+		} else {
+			content += fmt.Sprintf(`<tr><td>Name %s</td><td>%d</td></tr>`, name, inodo)
+		}
 	}
 
 	content += "</table>>];\n"

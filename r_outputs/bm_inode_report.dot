@@ -9,9 +9,9 @@ digraph InodeReport {
 				<tr><td><b>UID</b></td><td>1</td></tr>
 				<tr><td><b>GID</b></td><td>1</td></tr>
 				<tr><td><b>Size</b></td><td>0</td></tr>
-				<tr><td><b>Access Time</b></td><td>2024-09-15T00:45:20-06:00</td></tr>
-				<tr><td><b>Creation Time</b></td><td>2024-09-15T00:45:20-06:00</td></tr>
-				<tr><td><b>Modification Time</b></td><td>2024-09-15T00:45:20-06:00</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
 				<tr><td><b>Type</b></td><td>0</td></tr>
 				<tr><td><b>Permissions</b></td><td>777</td></tr>
 				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>
@@ -27,14 +27,90 @@ inode1 [label=<
 				<tr><td colspan="2" bgcolor="#CCCCCC"><b>INODE REPORT 1</b></td></tr>
 				<tr><td><b>UID</b></td><td>1</td></tr>
 				<tr><td><b>GID</b></td><td>1</td></tr>
-				<tr><td><b>Size</b></td><td>67</td></tr>
-				<tr><td><b>Access Time</b></td><td>2024-09-15T00:45:20-06:00</td></tr>
-				<tr><td><b>Creation Time</b></td><td>2024-09-15T00:45:20-06:00</td></tr>
-				<tr><td><b>Modification Time</b></td><td>2024-09-15T00:45:20-06:00</td></tr>
+				<tr><td><b>Size</b></td><td>121</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
 				<tr><td><b>Type</b></td><td>1</td></tr>
 				<tr><td><b>Permissions</b></td><td>777</td></tr>
 				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>
 		<tr><td>Block 1</td><td>1</td></tr><tr><td>Block 2</td><td>2</td></tr><tr><td>Block 3</td><td>-1</td></tr><tr><td>Block 4</td><td>-1</td></tr><tr><td>Block 5</td><td>-1</td></tr><tr><td>Block 6</td><td>-1</td></tr><tr><td>Block 7</td><td>-1</td></tr><tr><td>Block 8</td><td>-1</td></tr><tr><td>Block 9</td><td>-1</td></tr><tr><td>Block 10</td><td>-1</td></tr><tr><td>Block 11</td><td>-1</td></tr><tr><td>Block 12</td><td>-1</td></tr>
+			<tr><td colspan="2" bgcolor="#E0E0E0"><b>Indirect Blocks</b></td></tr>
+			<tr><td>Single Indirect</td><td>-1</td></tr>
+			<tr><td>Double Indirect</td><td>-1</td></tr>
+			<tr><td>Triple Indirect</td><td>-1</td></tr>
+			</table>>];
+		inode1 -> inode2;
+inode2 [label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td colspan="2" bgcolor="#CCCCCC"><b>INODE REPORT 2</b></td></tr>
+				<tr><td><b>UID</b></td><td>1</td></tr>
+				<tr><td><b>GID</b></td><td>1</td></tr>
+				<tr><td><b>Size</b></td><td>0</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Type</b></td><td>0</td></tr>
+				<tr><td><b>Permissions</b></td><td>664</td></tr>
+				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>
+		<tr><td>Block 1</td><td>3</td></tr><tr><td>Block 2</td><td>-1</td></tr><tr><td>Block 3</td><td>-1</td></tr><tr><td>Block 4</td><td>-1</td></tr><tr><td>Block 5</td><td>-1</td></tr><tr><td>Block 6</td><td>-1</td></tr><tr><td>Block 7</td><td>-1</td></tr><tr><td>Block 8</td><td>-1</td></tr><tr><td>Block 9</td><td>-1</td></tr><tr><td>Block 10</td><td>-1</td></tr><tr><td>Block 11</td><td>-1</td></tr><tr><td>Block 12</td><td>-1</td></tr>
+			<tr><td colspan="2" bgcolor="#E0E0E0"><b>Indirect Blocks</b></td></tr>
+			<tr><td>Single Indirect</td><td>-1</td></tr>
+			<tr><td>Double Indirect</td><td>-1</td></tr>
+			<tr><td>Triple Indirect</td><td>-1</td></tr>
+			</table>>];
+		inode2 -> inode3;
+inode3 [label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td colspan="2" bgcolor="#CCCCCC"><b>INODE REPORT 3</b></td></tr>
+				<tr><td><b>UID</b></td><td>1</td></tr>
+				<tr><td><b>GID</b></td><td>1</td></tr>
+				<tr><td><b>Size</b></td><td>0</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Type</b></td><td>0</td></tr>
+				<tr><td><b>Permissions</b></td><td>664</td></tr>
+				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>
+		<tr><td>Block 1</td><td>4</td></tr><tr><td>Block 2</td><td>-1</td></tr><tr><td>Block 3</td><td>-1</td></tr><tr><td>Block 4</td><td>-1</td></tr><tr><td>Block 5</td><td>-1</td></tr><tr><td>Block 6</td><td>-1</td></tr><tr><td>Block 7</td><td>-1</td></tr><tr><td>Block 8</td><td>-1</td></tr><tr><td>Block 9</td><td>-1</td></tr><tr><td>Block 10</td><td>-1</td></tr><tr><td>Block 11</td><td>-1</td></tr><tr><td>Block 12</td><td>-1</td></tr>
+			<tr><td colspan="2" bgcolor="#E0E0E0"><b>Indirect Blocks</b></td></tr>
+			<tr><td>Single Indirect</td><td>-1</td></tr>
+			<tr><td>Double Indirect</td><td>-1</td></tr>
+			<tr><td>Triple Indirect</td><td>-1</td></tr>
+			</table>>];
+		inode3 -> inode4;
+inode4 [label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td colspan="2" bgcolor="#CCCCCC"><b>INODE REPORT 4</b></td></tr>
+				<tr><td><b>UID</b></td><td>1</td></tr>
+				<tr><td><b>GID</b></td><td>1</td></tr>
+				<tr><td><b>Size</b></td><td>0</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Type</b></td><td>0</td></tr>
+				<tr><td><b>Permissions</b></td><td>664</td></tr>
+				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>
+		<tr><td>Block 1</td><td>5</td></tr><tr><td>Block 2</td><td>-1</td></tr><tr><td>Block 3</td><td>-1</td></tr><tr><td>Block 4</td><td>-1</td></tr><tr><td>Block 5</td><td>-1</td></tr><tr><td>Block 6</td><td>-1</td></tr><tr><td>Block 7</td><td>-1</td></tr><tr><td>Block 8</td><td>-1</td></tr><tr><td>Block 9</td><td>-1</td></tr><tr><td>Block 10</td><td>-1</td></tr><tr><td>Block 11</td><td>-1</td></tr><tr><td>Block 12</td><td>-1</td></tr>
+			<tr><td colspan="2" bgcolor="#E0E0E0"><b>Indirect Blocks</b></td></tr>
+			<tr><td>Single Indirect</td><td>-1</td></tr>
+			<tr><td>Double Indirect</td><td>-1</td></tr>
+			<tr><td>Triple Indirect</td><td>-1</td></tr>
+			</table>>];
+		inode4 -> inode5;
+inode5 [label=<
+			<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+				<tr><td colspan="2" bgcolor="#CCCCCC"><b>INODE REPORT 5</b></td></tr>
+				<tr><td><b>UID</b></td><td>1</td></tr>
+				<tr><td><b>GID</b></td><td>1</td></tr>
+				<tr><td><b>Size</b></td><td>15</td></tr>
+				<tr><td><b>Access Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Creation Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Modification Time</b></td><td>2024-09-16T13:50:24-06:00</td></tr>
+				<tr><td><b>Type</b></td><td>1</td></tr>
+				<tr><td><b>Permissions</b></td><td>664</td></tr>
+				<tr><td colspan="2" bgcolor="#E0E0E0"><b>Direct Blocks</b></td></tr>
+		<tr><td>Block 1</td><td>6</td></tr><tr><td>Block 2</td><td>-1</td></tr><tr><td>Block 3</td><td>-1</td></tr><tr><td>Block 4</td><td>-1</td></tr><tr><td>Block 5</td><td>-1</td></tr><tr><td>Block 6</td><td>-1</td></tr><tr><td>Block 7</td><td>-1</td></tr><tr><td>Block 8</td><td>-1</td></tr><tr><td>Block 9</td><td>-1</td></tr><tr><td>Block 10</td><td>-1</td></tr><tr><td>Block 11</td><td>-1</td></tr><tr><td>Block 12</td><td>-1</td></tr>
 			<tr><td colspan="2" bgcolor="#E0E0E0"><b>Indirect Blocks</b></td></tr>
 			<tr><td>Single Indirect</td><td>-1</td></tr>
 			<tr><td>Double Indirect</td><td>-1</td></tr>

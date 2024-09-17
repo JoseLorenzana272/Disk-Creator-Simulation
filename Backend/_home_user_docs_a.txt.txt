@@ -1,0 +1,5 @@
+Path: /home/user/docs/a.txt
+Recursive: false
+Size: 15
+Content:
+012345678901234

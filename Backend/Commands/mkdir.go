@@ -83,16 +83,15 @@ var idPartition string
 
 func commandMkdir(mkdir *MKDIR) error {
 	idPartition = IdPartitionGlobal
+
 	// Obtener la partición montada
-	fmt.Println("ID Partition Global:", IdPartitionGlobal)
-	fmt.Println("ID Partition:", idPartition)
 	partitionSuperblock, mountedPartition, partitionPath, err := global.GetMountedPartitionSuperblock(idPartition)
 	if err != nil {
 		return fmt.Errorf("error al obtener la partición montada: %w", err)
 	}
 
 	// Crear el directorio
-	err = createDirectory(mkdir.path, partitionSuperblock, partitionPath, mountedPartition, mkdir.p)
+	err = createDirectory(mkdir.path, partitionSuperblock, partitionPath, mountedPartition)
 	if err != nil {
 		err = fmt.Errorf("error al crear el directorio: %w", err)
 	}
@@ -100,48 +99,18 @@ func commandMkdir(mkdir *MKDIR) error {
 	return err
 }
 
-func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition, allowCreateParents bool) error {
+func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition) error {
 	fmt.Println("\nCreando directorio:", dirPath)
 
 	parentDirs, destDir := utils.GetParentDirectories(dirPath)
 	fmt.Println("\nDirectorios padres:", parentDirs)
 	fmt.Println("Directorio destino:", destDir)
 
-	// Validar si los directorios padres existen
-	if !allowCreateParents {
-		for _, parent := range parentDirs {
-			if !sb.DirectoryExists(partitionPath, parent) {
-				return fmt.Errorf("error: el directorio padre '%s' no existe y no se especificó la opción -p", parent)
-			}
-		}
-	} else {
-		// Si la opción -p fue especificada, crea los directorios padres si no existen
-		err := utils.CreateParentDirs(dirPath)
-		if err != nil {
-			return fmt.Errorf("error al crear las carpetas padre: %w", err)
-		}
-	}
-
-	// Crear el directorio destino
+	// Crear el directorio segun el path proporcionado
 	err := sb.CreateFolder(partitionPath, parentDirs, destDir)
 	if err != nil {
 		return fmt.Errorf("error al crear el directorio: %w", err)
 	}
-
-	// Actualizar el mapa de directorios creados
-	if global.DirectoriesCreated[partitionPath] == nil {
-		global.DirectoriesCreated[partitionPath] = make(map[string][]string)
-	}
-
-	// Agregar los directorios padres creados
-	for _, parent := range parentDirs {
-		if _, exists := global.DirectoriesCreated[partitionPath][parent]; !exists {
-			global.DirectoriesCreated[partitionPath][parent] = append(global.DirectoriesCreated[partitionPath][parent], parent)
-		}
-	}
-
-	// Agregar el directorio destino creado
-	global.DirectoriesCreated[partitionPath][destDir] = append(global.DirectoriesCreated[partitionPath][destDir], destDir)
 
 	// Imprimir inodos y bloques
 	sb.PrintInodes(partitionPath)
@@ -152,9 +121,6 @@ func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath st
 	if err != nil {
 		return fmt.Errorf("error al serializar el superbloque: %w", err)
 	}
-
-	//Imprimir estructura de directorios
-	fmt.Println("Directorios creados:", global.DirectoriesCreated)
 
 	return nil
 }

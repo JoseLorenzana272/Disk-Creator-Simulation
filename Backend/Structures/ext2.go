@@ -142,7 +142,7 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 					return err
 				}
 
-				// Actualizar el superbloque
+				BlocksMap[int(sb.S_blocks_count)] = "Folder Block" // Actualizar el superbloque
 				sb.S_blocks_count++
 				sb.S_free_blocks_count--
 				sb.S_first_blo += sb.S_block_size
@@ -278,6 +278,7 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 					}
 
 					// Actualizamos el superbloque
+					BlocksMap[int(sb.S_blocks_count)] = "File Block"
 					sb.S_blocks_count++
 					sb.S_free_blocks_count--
 					sb.S_first_blo += sb.S_block_size

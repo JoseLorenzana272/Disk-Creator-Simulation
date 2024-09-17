@@ -23,33 +23,30 @@ func ReportBMBlock(superblock *structures.SuperBlock, diskPath string, path stri
 	}
 	defer file.Close()
 
-	// Calcular el número total de bloques
+	// Calcular el número total de inodos
 	totalBlocks := superblock.S_blocks_count + superblock.S_free_blocks_count
 
+	// Obtener el contenido del bitmap de inodos
 	var bitmapContent strings.Builder
 
 	for i := int32(0); i < totalBlocks; i++ {
-		offset := int32(superblock.S_bm_block_start) + (i / 8)
-		_, err := file.Seek(int64(offset), 0)
+		// Establecer el puntero
+		_, err := file.Seek(int64(superblock.S_bm_block_start+i), 0)
 		if err != nil {
 			return fmt.Errorf("error al establecer el puntero en el archivo: %v", err)
 		}
 
-		// Leer un byte
+		// Leer un byte (carácter '0' o '1')
 		char := make([]byte, 1)
 		_, err = file.Read(char)
 		if err != nil {
 			return fmt.Errorf("error al leer el byte del archivo: %v", err)
 		}
 
-		bit := (char[0] >> (7 - (i % 8))) & 1
+		// Agregar el carácter al contenido del bitmap
+		bitmapContent.WriteByte(char[0])
 
-		if bit == 0 {
-			bitmapContent.WriteByte('0')
-		} else {
-			bitmapContent.WriteByte('1')
-		}
-
+		// Agregar un carácter de nueva línea cada 20 caracteres (20 inodos)
 		if (i+1)%20 == 0 {
 			bitmapContent.WriteString("\n")
 		}
@@ -68,6 +65,6 @@ func ReportBMBlock(superblock *structures.SuperBlock, diskPath string, path stri
 		return fmt.Errorf("error al escribir en el archivo TXT: %v", err)
 	}
 
-	fmt.Println("Archivo del bitmap de bloques generado:", path)
+	fmt.Println("Archivo del bitmap de inodos generado:", path)
 	return nil
 }

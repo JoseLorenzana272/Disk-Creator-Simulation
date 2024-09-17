@@ -11,10 +11,10 @@ import (
 )
 
 type REP struct {
-	id           string // ID del disco
-	path         string // Ruta del archivo del disco
-	name         string // Nombre del reporte
-	path_file_ls string // Ruta del archivo ls (opcional)
+	id   string // ID del disco
+	path string // Ruta del archivo del disco
+	name string // Nombre del reporte
+	ruta string // Ruta del archivo ls (opcional)
 }
 
 // ParserRep parsea el comando rep y devuelve una instancia de REP
@@ -24,7 +24,7 @@ func ParserRep(tokens []string) (string, error) {
 	// Unir tokens en una sola cadena y luego dividir por espacios, respetando las comillas
 	args := strings.Join(tokens, " ")
 	// Expresión regular para encontrar los parámetros del comando rep
-	re := regexp.MustCompile(`-id=[^\s]+|-path="[^"]+"|-path=[^\s]+|-name=[^\s]+|-path_file_ls="[^"]+"|-path_file_ls=[^\s]+`)
+	re := regexp.MustCompile(`-id=[^\s]+|-path="[^"]+"|-path=[^\s]+|-name=[^\s]+|-ruta="[^"]+"|-ruta=[^\s]+`)
 	// Encuentra todas las coincidencias de la expresión regular en la cadena de argumentos
 	matches := re.FindAllString(args, -1)
 
@@ -63,8 +63,8 @@ func ParserRep(tokens []string) (string, error) {
 				return "", errors.New("name must be one of: mbr, disk, inode, block, bm_inode, bm_block, sb, file, ls")
 			}
 			cmd.name = value
-		case "-path_file_ls":
-			cmd.path_file_ls = value
+		case "-ruta":
+			cmd.ruta = value
 		default:
 			// Si el parámetro no es reconocido, devuelve un error
 			return "", fmt.Errorf("unknown parameter: %s", key)

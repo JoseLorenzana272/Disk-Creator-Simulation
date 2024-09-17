@@ -3,20 +3,38 @@ digraph BlockReport {
 		node [shape=none, fontname="Helvetica, Arial, sans-serif"];
 		graph [splines=true, nodesep=0.5, ranksep=0.4];
 		edge [color=black, arrowhead=normal];
-	pointerBlock0 [label=<
+	folderBlock0 [label=<
 		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
-			<tr><td colspan="2" bgcolor="#CCCCCC"><b>POINTER BLOCK 0</b></td></tr>
-	<tr><td>Pointer 1</td><td>46</td></tr><tr><td>Pointer 2</td><td>0</td></tr><tr><td>Pointer 3</td><td>0</td></tr><tr><td>Pointer 4</td><td>0</td></tr><tr><td>Pointer 5</td><td>11822</td></tr><tr><td>Pointer 6</td><td>0</td></tr><tr><td>Pointer 7</td><td>0</td></tr><tr><td>Pointer 8</td><td>0</td></tr><tr><td>Pointer 9</td><td>1919251317</td></tr><tr><td>Pointer 10</td><td>2020879987</td></tr><tr><td>Pointer 11</td><td>116</td></tr><tr><td>Pointer 12</td><td>1</td></tr><tr><td>Pointer 13</td><td>45</td></tr><tr><td>Pointer 14</td><td>0</td></tr><tr><td>Pointer 15</td><td>0</td></tr><tr><td>Pointer 16</td><td>-1</td></tr></table>>];
-folderBlock1 [label=<
+			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FOLDER BLOCK 0</b></td></tr>
+	<tr><td>Name .</td><td>-</td></tr><tr><td>Name ..</td><td>-</td></tr><tr><td>Name users.txt</td><td>1</td></tr><tr><td>Name home</td><td>2</td></tr></table>>];
+fileBlock1 [label=<
 		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
-			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FOLDER BLOCK 1</b></td></tr>
-	<tr><td>Name 1</td><td>1,G,root
-1,U</td></tr><tr><td>Inode</td><td>1869574700</td></tr><tr><td>Name 2</td><td>t,root,123
-2</td></tr><tr><td>Inode</td><td>1965836076</td></tr><tr><td>Name 3</td><td>suarios
-2,U,</td></tr><tr><td>Inode</td><td>1635087221</td></tr><tr><td>Name 4</td><td>rios,user1,u</td></tr><tr><td>Inode</td><td>1918989683</td></tr></table>>];
+			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FILE BLOCK 1</b></td></tr>
+	<tr><td colspan="2">1,G,root
+1,U,root,root,123
+2,G,usuarios
+2,U,usuarios,user1,usuar</td></tr></table>>];
 fileBlock2 [label=<
 		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
 			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FILE BLOCK 2</b></td></tr>
 	<tr><td colspan="2">io
+3,U,usuarios,user2,usuario
+4,U,usuarios,user3,usuario
 </td></tr></table>>];
+folderBlock3 [label=<
+		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FOLDER BLOCK 3</b></td></tr>
+	<tr><td>Name .</td><td>2</td></tr><tr><td>Name ..</td><td>-</td></tr><tr><td>Name user</td><td>3</td></tr><tr><td>Name -</td><td>-1</td></tr></table>>];
+folderBlock4 [label=<
+		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FOLDER BLOCK 4</b></td></tr>
+	<tr><td>Name .</td><td>3</td></tr><tr><td>Name ..</td><td>2</td></tr><tr><td>Name docs</td><td>4</td></tr><tr><td>Name -</td><td>-1</td></tr></table>>];
+folderBlock5 [label=<
+		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FOLDER BLOCK 5</b></td></tr>
+	<tr><td>Name .</td><td>4</td></tr><tr><td>Name ..</td><td>3</td></tr><tr><td>Name a.txt</td><td>5</td></tr><tr><td>Name -</td><td>-1</td></tr></table>>];
+fileBlock6 [label=<
+		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
+			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FILE BLOCK 6</b></td></tr>
+	<tr><td colspan="2">012345678901234</td></tr></table>>];
 }

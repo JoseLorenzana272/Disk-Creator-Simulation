@@ -6,6 +6,7 @@ import (
 	utils "archivos_pro1/utils"
 	"errors"
 	"fmt"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -104,6 +105,12 @@ func ParserMkfile(tokens []string) (string, error) {
 		return "", err
 	}
 
+	// Crear un archivo txt con la información del MKFILE
+	err = CreateTxtFileWithMkfileContent(cmd)
+	if err != nil {
+		return "", err
+	}
+
 	return fmt.Sprintf("MKFILE: Archivo %s creado correctamente.", cmd.path), nil // Devuelve el comando MKFILE creado
 }
 
@@ -120,9 +127,9 @@ func commandMkfile(mkfile *MKFILE) error {
 	}
 
 	// Crear el archivo
-	err = createFile(mkfile.path, mkfile.size, mkfile.cont, partitionSuperblock, partitionPath, mountedPartition, mkfile.r)
+	err = createFile(mkfile.path, mkfile.size, mkfile.cont, partitionSuperblock, partitionPath, mountedPartition)
 	if err != nil {
-		err = fmt.Errorf("error al crear el archivo: %w", err)
+		return fmt.Errorf("error al crear el archivo: %w", err)
 	}
 
 	return err
@@ -138,28 +145,12 @@ func generateContent(size int) string {
 }
 
 // Funcion para crear un archivo
-func createFile(filePath string, size int, content string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition, allowParents bool) error {
+func createFile(filePath string, size int, content string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition) error {
 	fmt.Println("\nCreando archivo:", filePath)
 
 	parentDirs, destDir := utils.GetParentDirectories(filePath)
 	fmt.Println("\nDirectorios padres:", parentDirs)
 	fmt.Println("Directorio destino:", destDir)
-
-	// Validar si los directorios padres existen
-	if !allowParents {
-		for _, parent := range parentDirs {
-			if !sb.DirectoryExists(partitionPath, parent) {
-				fmt.Println("Directorio padre no existe:", parent)
-				return fmt.Errorf("error: el directorio padre '%s' no existe y no se especificó la opción -r", parent)
-			}
-		}
-	} else {
-		// Si la opción -r fue especificada, crea los directorios padres si no existen
-		err := utils.CreateParentDirs(filePath)
-		if err != nil {
-			return fmt.Errorf("error al crear las carpetas padre: %w", err)
-		}
-	}
 
 	// Obtener contenido por chunks
 	chunks := utils.SplitStringIntoChunks(content)
@@ -181,5 +172,31 @@ func createFile(filePath string, size int, content string, sb *structures.SuperB
 		return fmt.Errorf("error al serializar el superbloque: %w", err)
 	}
 
+	return nil
+}
+
+func CreateTxtFileWithMkfileContent(mkfile *MKFILE) error {
+	// Crear el nombre del archivo txt basado en el path del MKFILE
+	txtFilename := strings.Replace(mkfile.path, "/", "_", -1) + ".txt"
+
+	// Abrir (o crear) el archivo txt
+	file, err := os.Create(txtFilename)
+	if err != nil {
+		return fmt.Errorf("error al crear el archivo txt: %w", err)
+	}
+	defer file.Close()
+
+	// Escribir la información del MKFILE en el archivo txt
+	content := fmt.Sprintf("Path: %s\n", mkfile.path)
+	content += fmt.Sprintf("Recursive: %v\n", mkfile.r)
+	content += fmt.Sprintf("Size: %d\n", mkfile.size)
+	content += fmt.Sprintf("Content:\n%s\n", mkfile.cont)
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		return fmt.Errorf("error al escribir en el archivo txt: %w", err)
+	}
+
+	fmt.Printf("Archivo txt creado: %s\n", txtFilename)
 	return nil
 }

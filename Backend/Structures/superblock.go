@@ -13,6 +13,7 @@ import (
 // Ahora mejor crear un mapa dentro de otro mapa, donde el primer mapa sea del id de la particion y el segundo mapa sea el de los grupos
 
 var Groups = make(map[string]string)
+var BlocksMap = make(map[int]string)
 
 type SuperBlock struct {
 	S_filesystem_type   int32
@@ -138,19 +139,20 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 		},
 	}
 
-	// Actualizar el bitmap de bloques
-	err = sb.UpdateBitmapBlock(path)
-	if err != nil {
-		return err
-	}
-
 	// Serializar el bloque de carpeta raíz
 	err = rootBlock.Serialize(path, int64(sb.S_first_blo))
 	if err != nil {
 		return err
 	}
 
+	// Actualizar el bitmap de bloques
+	err = sb.UpdateBitmapBlock(path)
+	if err != nil {
+		return err
+	}
+
 	// Actualizar el superbloque
+	BlocksMap[int(sb.S_blocks_count)] = "Folder Block"
 	sb.S_blocks_count++
 	sb.S_free_blocks_count--
 	sb.S_first_blo += sb.S_block_size
@@ -246,6 +248,7 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 	}
 
 	// Actualizamos el superbloque
+	BlocksMap[int(sb.S_blocks_count)] = "File Block"
 	sb.S_blocks_count++
 	sb.S_free_blocks_count--
 	sb.S_first_blo += sb.S_block_size
@@ -619,6 +622,13 @@ func AddUserGroups(superblock *SuperBlock, path string, user string) error {
 					return fmt.Errorf("error al actualizar el bloque de users.txt: %v", err)
 				}
 				truthyString = string(truthyString[64:])
+				// Actualizar el bitmap de bloques
+				err = superblock.UpdateBitmapBlock(path)
+				if err != nil {
+					return err
+				}
+
+				BlocksMap[int(superblock.S_blocks_count)] = "File Block"
 				superblock.S_blocks_count++
 				superblock.S_free_blocks_count--
 				superblock.S_first_blo += superblock.S_block_size
@@ -634,6 +644,13 @@ func AddUserGroups(superblock *SuperBlock, path string, user string) error {
 				if err != nil {
 					return fmt.Errorf("error al actualizar el bloque de users.txt: %v", err)
 				}
+				// Actualizar el bitmap de bloques
+				err = superblock.UpdateBitmapBlock(path)
+				if err != nil {
+					return err
+				}
+
+				BlocksMap[int(superblock.S_blocks_count)] = "File Block"
 				superblock.S_blocks_count++
 				superblock.S_free_blocks_count--
 				superblock.S_first_blo += superblock.S_block_size
@@ -1106,7 +1123,7 @@ func (sb *SuperBlock) CreateFile(path string, parentsDir []string, destFile stri
 	return nil
 }
 
-func (sb *SuperBlock) DirectoryExists(partitionPath string, dirPath string) bool {
+/*func (sb *SuperBlock) DirectoryExists(partitionPath string, dirPath string) bool {
 	// Dividir la ruta en partes para verificar cada directorio
 	dirs := strings.Split(dirPath, "/")
 	fmt.Println("Buscando ruta:", dirs)
@@ -1158,4 +1175,4 @@ func (sb *SuperBlock) DirectoryExists(partitionPath string, dirPath string) bool
 	// Si se recorrieron todos los directorios y se encontraron, retornar true
 	fmt.Println("Ruta encontrada:", dirPath)
 	return true
-}
+}*/
