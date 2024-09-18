@@ -153,6 +153,11 @@ func commandRep(rep *REP) error {
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 		}
+
+	case "file":
+		//Retornar solo un mensaje de éxito
+		fmt.Println("Reporte de archivo creado exitosamente")
+
 	}
 
 	return nil

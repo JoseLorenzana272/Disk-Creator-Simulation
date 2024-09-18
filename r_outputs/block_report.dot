@@ -12,14 +12,12 @@ fileBlock1 [label=<
 			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FILE BLOCK 1</b></td></tr>
 	<tr><td colspan="2">1,G,root
 1,U,root,root,123
-2,G,usuarios
-2,U,usuarios,user1,usuar</td></tr></table>>];
+5,G,usuarios
+5,U,usuarios,user1,usuar</td></tr></table>>];
 fileBlock2 [label=<
 		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
 			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FILE BLOCK 2</b></td></tr>
 	<tr><td colspan="2">io
-3,U,usuarios,user2,usuario
-4,U,usuarios,user3,usuario
 </td></tr></table>>];
 folderBlock3 [label=<
 		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
@@ -32,9 +30,9 @@ folderBlock4 [label=<
 folderBlock5 [label=<
 		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
 			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FOLDER BLOCK 5</b></td></tr>
-	<tr><td>Name .</td><td>4</td></tr><tr><td>Name ..</td><td>3</td></tr><tr><td>Name a.txt</td><td>5</td></tr><tr><td>Name -</td><td>-1</td></tr></table>>];
+	<tr><td>Name .</td><td>4</td></tr><tr><td>Name ..</td><td>3</td></tr><tr><td>Name semicorchea.</td><td>5</td></tr><tr><td>Name -</td><td>-1</td></tr></table>>];
 fileBlock6 [label=<
 		<table border="0" cellborder="1" cellspacing="0" cellpadding="4">
 			<tr><td colspan="2" bgcolor="#CCCCCC"><b>FILE BLOCK 6</b></td></tr>
-	<tr><td colspan="2">012345678901234</td></tr></table>>];
+	<tr><td colspan="2">01234567890123456789</td></tr></table>>];
 }

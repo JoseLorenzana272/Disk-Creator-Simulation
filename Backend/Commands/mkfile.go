@@ -111,7 +111,7 @@ func ParserMkfile(tokens []string) (string, error) {
 		return "", err
 	}
 
-	return fmt.Sprintf("MKFILE: Archivo %s creado correctamente.", cmd.path), nil // Devuelve el comando MKFILE creado
+	return fmt.Sprintf("MKFILE: Archivo %s created succesfully.", cmd.path), nil // Devuelve el comando MKFILE creado
 }
 
 func commandMkfile(mkfile *MKFILE) error {
@@ -122,12 +122,22 @@ func commandMkfile(mkfile *MKFILE) error {
 	}
 
 	// Generar el contenido del archivo si no se proporcionó
-	if mkfile.cont == "" {
+	if mkfile.cont != "" {
+		if _, err := os.Stat(mkfile.cont); err == nil {
+			fileContent, err := os.ReadFile(mkfile.cont)
+			if err != nil {
+				return fmt.Errorf("an error occurred reading the file: %w", err)
+			}
+			mkfile.cont = string(fileContent)
+		} else {
+			mkfile.cont = generateContent(mkfile.size)
+		}
+	} else {
 		mkfile.cont = generateContent(mkfile.size)
 	}
 
 	// Crear el archivo
-	err = createFile(mkfile.path, mkfile.size, mkfile.cont, partitionSuperblock, partitionPath, mountedPartition)
+	err = createFile(mkfile.path, mkfile.size, mkfile.cont, partitionSuperblock, partitionPath, mountedPartition, mkfile.r)
 	if err != nil {
 		return fmt.Errorf("error al crear el archivo: %w", err)
 	}
@@ -145,7 +155,7 @@ func generateContent(size int) string {
 }
 
 // Funcion para crear un archivo
-func createFile(filePath string, size int, content string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition) error {
+func createFile(filePath string, size int, content string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition, createParents bool) error {
 	fmt.Println("\nCreando archivo:", filePath)
 
 	parentDirs, destDir := utils.GetParentDirectories(filePath)
@@ -157,7 +167,7 @@ func createFile(filePath string, size int, content string, sb *structures.SuperB
 	fmt.Println("\nChunks del contenido:", chunks)
 
 	// Crear el archivo
-	err := sb.CreateFile(partitionPath, parentDirs, destDir, size, chunks)
+	err := sb.CreateFile(partitionPath, parentDirs, destDir, size, chunks, createParents)
 	if err != nil {
 		return fmt.Errorf("error al crear el archivo: %w", err)
 	}

@@ -91,7 +91,7 @@ func commandMkdir(mkdir *MKDIR) error {
 	}
 
 	// Crear el directorio
-	err = createDirectory(mkdir.path, partitionSuperblock, partitionPath, mountedPartition)
+	err = createDirectory(mkdir.path, partitionSuperblock, partitionPath, mountedPartition, mkdir.p)
 	if err != nil {
 		err = fmt.Errorf("error al crear el directorio: %w", err)
 	}
@@ -99,7 +99,7 @@ func commandMkdir(mkdir *MKDIR) error {
 	return err
 }
 
-func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition) error {
+func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath string, mountedPartition *structures.Partition, createParents bool) error {
 	fmt.Println("\nCreando directorio:", dirPath)
 
 	parentDirs, destDir := utils.GetParentDirectories(dirPath)
@@ -107,7 +107,7 @@ func createDirectory(dirPath string, sb *structures.SuperBlock, partitionPath st
 	fmt.Println("Directorio destino:", destDir)
 
 	// Crear el directorio segun el path proporcionado
-	err := sb.CreateFolder(partitionPath, parentDirs, destDir)
+	err := sb.CreateFolder(partitionPath, parentDirs, destDir, createParents)
 	if err != nil {
 		return fmt.Errorf("error al crear el directorio: %w", err)
 	}

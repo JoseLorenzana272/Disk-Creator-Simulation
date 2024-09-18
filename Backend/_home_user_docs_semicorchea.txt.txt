@@ -1,0 +1,5 @@
+Path: /home/user/docs/semicorchea.txt
+Recursive: false
+Size: 20
+Content:
+01234567890123456789

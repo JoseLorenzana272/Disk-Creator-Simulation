@@ -211,14 +211,14 @@ func (sb *SuperBlock) CreateUsersFile(path string) error {
 		I_perm:  [3]byte{'7', '7', '7'},
 	}
 
-	// Actualizar el bitmap de inodos
-	err = sb.UpdateBitmapInode(path)
+	// Serializar el inodo users.txt
+	err = usersInode.Serialize(path, int64(sb.S_first_ino))
 	if err != nil {
 		return err
 	}
 
-	// Serializar el inodo users.txt
-	err = usersInode.Serialize(path, int64(sb.S_first_ino))
+	// Actualizar el bitmap de inodos
+	err = sb.UpdateBitmapInode(path)
 	if err != nil {
 		return err
 	}
@@ -1087,17 +1087,21 @@ func (sb *SuperBlock) UpdateGroupForUser(path string, target string, group strin
 	return "", nil
 }*/
 
-func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir string) error {
+func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir string, createParents bool) error {
 	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
 	if len(parentsDir) == 0 {
-		return sb.createFolderInInode(path, 0, parentsDir, destDir)
+		_, err := sb.createFolderInInode(path, 0, parentsDir, destDir, createParents)
+		return err
 	}
 
 	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
 	for i := int32(0); i < sb.S_inodes_count; i++ {
-		err := sb.createFolderInInode(path, i, parentsDir, destDir)
+		verification, err := sb.createFolderInInode(path, i, parentsDir, destDir, createParents)
 		if err != nil {
 			return err
+		}
+		if verification {
+			break
 		}
 	}
 
@@ -1105,18 +1109,22 @@ func (sb *SuperBlock) CreateFolder(path string, parentsDir []string, destDir str
 }
 
 // CreateFile crea un archivo en el sistema de archivos
-func (sb *SuperBlock) CreateFile(path string, parentsDir []string, destFile string, size int, cont []string) error {
+func (sb *SuperBlock) CreateFile(path string, parentsDir []string, destFile string, size int, cont []string, createParents bool) error {
 
 	// Si parentsDir está vacío, solo trabajar con el primer inodo que sería el raíz "/"
 	if len(parentsDir) == 0 {
-		return sb.createFileInInode(path, 0, parentsDir, destFile, size, cont)
+		_, err := sb.createFileInInode(path, 0, parentsDir, destFile, size, cont, createParents)
+		return err
 	}
 
 	// Iterar sobre cada inodo ya que se necesita buscar el inodo padre
 	for i := int32(0); i < sb.S_inodes_count; i++ {
-		err := sb.createFileInInode(path, i, parentsDir, destFile, size, cont)
+		create, err := sb.createFileInInode(path, i, parentsDir, destFile, size, cont, createParents)
 		if err != nil {
 			return err
+		}
+		if create {
+			break
 		}
 	}
 

@@ -17,7 +17,12 @@ func Analyzer(input string) (interface{}, error) {
 	for _, line := range lines {
 		line = strings.TrimSpace(line) // Elimina espacios en blanco antes y después de cada línea
 		if line == "" {
-			continue // Ignora líneas vacías
+			continue
+		}
+
+		if strings.HasPrefix(line, "#") {
+			results = append(results, line)
+			continue
 		}
 
 		tokens := strings.Fields(line)

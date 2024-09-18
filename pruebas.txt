@@ -5,11 +5,13 @@ mkfs -id=601A
 login -user=root -pass=123 -id=601A
 mkgrp -name=usuarios
 mkusr -user=user1 -pass=usuario -grp=usuarios
+# JAJAJAJAJJAJAJJA
+mkdir -path="/home/user/docs" -p
+mkfile -size=20 -path=/home/user/docs/semicorchea.txt
 rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/mbr_report.png -name=mbr
-rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/bm_inode_report.png -name=inode
-rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/inode_report.png -name=bm_inode
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/inode_report.png -name=inode
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/bm_inode_report.txt -name=bm_inode
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/bm_block_report.txt -name=bm_block
 rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/sb_report.png -name=sb
-mkdir -p -path=/home/jose/Escritorio/prueba_A
-mkdir -p -path=/home/jose/Escritorio/prueba_B
-mkfile -size=15 -path=/home/jose/Escritorio/a.txt -r
 rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/block_report.png -name=block
+rep -id=601A -path=/home/jose/Escritorio/archivos_pro1/r_outputs/file_report.txt -name=file

@@ -2,21 +2,22 @@ package structures
 
 import (
 	"archivos_pro1/utils"
+	"fmt"
 	"strings"
 	"time"
 )
 
-func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parentsDir []string, destDir string) error {
+func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parentsDir []string, destDir string, createParents bool) (bool, error) {
 	// Crear un nuevo inodo
 	inode := &Inode{}
 	// Deserializar el inodo
 	err := inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
 	if err != nil {
-		return err
+		return false, err
 	}
 	// Verificar si el inodo es de tipo carpeta
 	if inode.I_type[0] == '1' {
-		return nil
+		return false, nil
 	}
 
 	// Iterar sobre cada bloque del inodo (apuntadores)
@@ -32,7 +33,7 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 		// Deserializar el bloque
 		err := block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size))) // 64 porque es el tamaño de un bloque
 		if err != nil {
-			return err
+			return false, err
 		}
 
 		// Iterar sobre cada contenido del bloque, desde el index 2 porque los primeros dos son . y ..
@@ -46,28 +47,45 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 
 				// Si el contenido está vacío, salir
 				if content.B_inodo == -1 {
-					break
+					if createParents {
+						_, err := sb.createFolderInInode(path, inodeIndex, []string{}, parentsDir[0], createParents)
+						if err != nil {
+							return false, err
+						}
+
+						err = inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+						if err != nil {
+							return false, err
+						}
+
+						err = block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size)))
+						if err != nil {
+							return false, err
+						}
+
+						content = block.B_content[indexContent]
+
+					} else {
+						return false, fmt.Errorf("the folder %s does not exist", strings.Join(parentsDir, "/"))
+					}
 				}
 
 				// Obtenemos la carpeta padre más cercana
 				parentDir, err := utils.First(parentsDir)
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Convertir B_name a string y eliminar los caracteres nulos
 				contentName := strings.Trim(string(content.B_name[:]), "\x00 ")
 				// Convertir parentDir a string y eliminar los caracteres nulos
 				parentDirName := strings.Trim(parentDir, "\x00 ")
-				// Si el nombre del contenido coincide con el nombre de la carpeta padre
 				if strings.EqualFold(contentName, parentDirName) {
-					//fmt.Println("---------LA ENCONTRÉ-------")
-					// Si son las mismas, entonces entramos al inodo que apunta el bloque
-					err := sb.createFolderInInode(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destDir)
+					_, err := sb.createFolderInInode(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destDir, createParents)
 					if err != nil {
-						return err
+						return false, err
 					}
-					return nil
+					return true, nil
 				}
 			} else {
 				//fmt.Println("---------ESTOY  CREANDO--------")
@@ -87,7 +105,7 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 				// Serializar el bloque
 				err = block.Serialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size)))
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Crear el inodo de la carpeta
@@ -106,13 +124,13 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 				// Serializar el inodo de la carpeta
 				err = folderInode.Serialize(path, int64(sb.S_first_ino))
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Actualizar el bitmap de inodos
 				err = sb.UpdateBitmapInode(path)
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Actualizar el superbloque
@@ -133,13 +151,13 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 				// Serializar el bloque de la carpeta
 				err = folderBlock.Serialize(path, int64(sb.S_first_blo))
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Actualizar el bitmap de bloques
 				err = sb.UpdateBitmapBlock(path)
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				BlocksMap[int(sb.S_blocks_count)] = "Folder Block" // Actualizar el superbloque
@@ -147,26 +165,26 @@ func (sb *SuperBlock) createFolderInInode(path string, inodeIndex int32, parents
 				sb.S_free_blocks_count--
 				sb.S_first_blo += sb.S_block_size
 
-				return nil
+				return true, nil
 			}
 		}
 
 	}
-	return nil
+	return false, nil
 }
 
 // createFolderinode crea una carpeta en un inodo específico
-func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDir []string, destFile string, fileSize int, fileContent []string) error {
+func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDir []string, destFile string, fileSize int, fileContent []string, createParents bool) (bool, error) {
 	// Crear un nuevo inodo
 	inode := &Inode{}
 	// Deserializar el inodo
 	err := inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
 	if err != nil {
-		return err
+		return false, err
 	}
 	// Verificar si el inodo es de tipo carpeta
 	if inode.I_type[0] == '1' {
-		return nil
+		return false, nil
 	}
 
 	// Iterar sobre cada bloque del inodo (apuntadores)
@@ -182,7 +200,7 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 		// Deserializar el bloque
 		err := block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size))) // 64 porque es el tamaño de un bloque
 		if err != nil {
-			return err
+			return false, err
 		}
 
 		// Iterar sobre cada contenido del bloque, desde el index 2 porque los primeros dos son . y ..
@@ -196,13 +214,31 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 
 				// Si el contenido está vacío, salir
 				if content.B_inodo == -1 {
-					break
+					if createParents {
+						parentsFolders := append([]string(nil), parentsDir[:len(parentsDir)-1]...)
+						destFolder := parentsDir[len(parentsDir)-1]
+						sb.createFolderInInode(path, inodeIndex, parentsFolders, destFolder, true)
+						err = inode.Deserialize(path, int64(sb.S_inode_start+(inodeIndex*sb.S_inode_size)))
+						if err != nil {
+							return false, err
+						}
+
+						err = block.Deserialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size)))
+						if err != nil {
+							return false, err
+						}
+
+						content = block.B_content[indexContent]
+
+					} else {
+						return false, fmt.Errorf("the folder %s does not exist", strings.Join(parentsDir, "/"))
+					}
 				}
 
 				// Obtenemos la carpeta padre más cercana
 				parentDir, err := utils.First(parentsDir)
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Convertir B_name a string y eliminar los caracteres nulos
@@ -213,11 +249,11 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 				if strings.EqualFold(contentName, parentDirName) {
 					//fmt.Println("---------ESTOY  ENCONTRANDO--------")
 					// Si son las mismas, entonces entramos al inodo que apunta el bloque
-					err := sb.createFileInInode(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destFile, fileSize, fileContent)
+					_, err := sb.createFileInInode(path, content.B_inodo, utils.RemoveElement(parentsDir, 0), destFile, fileSize, fileContent, createParents)
 					if err != nil {
-						return err
+						return false, err
 					}
-					return nil
+					return true, nil
 				}
 			} else {
 				//fmt.Println("---------ESTOY  CREANDO--------")
@@ -237,7 +273,7 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 				// Serializar el bloque
 				err = block.Serialize(path, int64(sb.S_block_start+(blockIndex*sb.S_block_size)))
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Crear el inodo del archivo
@@ -268,13 +304,13 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 					// Serializar el bloque de users.txt
 					err = fileBlock.Serialize(path, int64(sb.S_first_blo))
 					if err != nil {
-						return err
+						return false, err
 					}
 
 					// Actualizar el bitmap de bloques
 					err = sb.UpdateBitmapBlock(path)
 					if err != nil {
-						return err
+						return false, err
 					}
 
 					// Actualizamos el superbloque
@@ -287,13 +323,13 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 				// Serializar el inodo de la carpeta
 				err = fileInode.Serialize(path, int64(sb.S_first_ino))
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Actualizar el bitmap de inodos
 				err = sb.UpdateBitmapInode(path)
 				if err != nil {
-					return err
+					return false, err
 				}
 
 				// Actualizar el superbloque
@@ -301,10 +337,10 @@ func (sb *SuperBlock) createFileInInode(path string, inodeIndex int32, parentsDi
 				sb.S_free_inodes_count--
 				sb.S_first_ino += sb.S_inode_size
 
-				return nil
+				return true, nil
 			}
 		}
 
 	}
-	return nil
+	return false, nil
 }
